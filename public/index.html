@@ -15,6 +15,7 @@
 
     <div class="chat-content">
         <div class="content">
+            
         </div>
         <form class="input-box">
             <textarea class="input" id = "input" placeholder="Enter"></textarea>
@@ -24,54 +25,28 @@
     <p class="end">Copyright By Jeff OH</p>
 
     <script>
-        const webSocket = new WebSocket("ws://localhost:30001");
-        webSocket.onopen = ()=>{
-            console.log("웹소켓서버와 연결 성공");
-        };
-        
-        // 메세지 수신 이벤트 처리
-        webSocket.onmessage = function (event) {
-            const UserData = JSON.parse(event.data);
-            const UserTime = UserData.time.indexOf(':');
-
-            if(UserData.ip == 'True')
-            {
-                var template = `<div class="line">
-                    <span class="chat-box mine">${UserData.content}</span>
-                    <span class="chat-time mine">${UserData.time.slice(11, UserTime+3)}</span>
-                </div>`
-            }
-            else{
-                var template = `<div class="line">
-                    <span class="chat-box person">${UserData.content}</span>
-                    <span class="chat-time person">${UserData.time.slice(11, UserTime+3)}</span>
-                </div>`
-            }
-            document.querySelector('.content').insertAdjacentHTML('beforeend', template);
-            document.querySelector('.content').scrollTop=document.querySelector('.content').scrollHeight;
-        }
-    
-        // 연결 종료 이벤트 처리
-        webSocket.onclose = function(){
-            console.log("서버 웹소켓 연결 종료");
-        }
-    
-        // 에러 발생 이벤트 처리
-        webSocket.onerror = function(event){
-            console.log(event)
-        }
-    
-        //웹소켓 서버에게 메세지 보내기
-        document.querySelector('#input').addEventListener('keydown',function(event){
+        document.querySelector('#input').addEventListener('keydown', function(event){
             if(event.keyCode == 13){
-                if(webSocket.readyState === webSocket.OPEN){ // 연결 상태 확인
-                    webSocket.send(`${document.querySelector('#input').value}`); // 웹소켓 서버에게 메시지 전송
-                }else{
-                    alert("연결된 웹소켓 서버가 없습니다.");
-                }
-                document.querySelector("#input").value='';
+                var template = `<div class="line">
+                    <span class="chat-box mine">${document.querySelector('#input').value}</span>
+                </div>`
+                document.querySelector('.content').insertAdjacentHTML('beforeend', template);
+                document.querySelector('.content').scrollTop = document.querySelector('.content').scrollHeight;
+
+                fetch(`http://localhost:30002/content/${document.querySelector('#input').value}`)
+                .then((res)=>res.json())
+                .then((data) => {
+                    UserData = JSON.parse(data);
+                    var template = `<div class="line">
+                        <span class="chat-box">${UserData.content}</span>
+                    </div>`
+                    document.querySelector('.content').insertAdjacentHTML('beforeend', template);
+                    document.querySelector('.content').scrollTop = document.querySelector('.content').scrollHeight;
+                });
+                document.querySelector('#input').value = '';
             }
-        });
+        })
+        
     </script>
 </body>
 </html>

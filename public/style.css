@@ -23,7 +23,6 @@
 .line{
     margin: 10px;
     display: flex;
-    flex-direction: column;
     background: white;
 }
 
@@ -39,9 +38,6 @@
     max-width: 200px;
 }
 
-.person{
-    margin-right: auto;
-}
 .mine{
     margin-left: auto;
 }
