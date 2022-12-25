@@ -33,10 +33,13 @@
                 document.querySelector('.content').insertAdjacentHTML('beforeend', template);
                 document.querySelector('.content').scrollTop = document.querySelector('.content').scrollHeight;
 
-                fetch(`http://localhost:30002/content/${document.querySelector('#input').value}`)
-                .then((res)=>res.json())
-                .then((data) => {
-                    UserData = JSON.parse(data);
+                fetch(`http://localhost:3000/content/${document.querySelector('#input').value}`)
+                .then(function(res){
+                    return res.json();
+                })
+                .then(function(data){
+                    JSONData = JSON.stringify(data);
+                    UserData = JSON.parse(JSONData);
                     var template = `<div class="line">
                         <span class="chat-box">${UserData.content}</span>
                     </div>`
